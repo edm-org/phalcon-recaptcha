@@ -1,5 +1,6 @@
 <?php
-/*
+
+/**
  * This is a PHP library that handles calling reCAPTCHA.
  *    - Documentation and latest version
  *          http://recaptcha.net/plugins/php/
@@ -32,7 +33,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 class Recaptcha extends \Phalcon\DI\Injectable
 {
     /**
@@ -61,10 +61,11 @@ class Recaptcha extends \Phalcon\DI\Injectable
      * @param string $error The error given by reCAPTCHA (optional, default is '')
      * @param boolean $useSSL Should the request be made over ssl? (optional, default is false)
      * @return string - The HTML to be embedded in the user's form.
+     * @throws \Phalcon\Exception
      */
     public static function get($publicKey, $error = '', $useSSL = false)
     {
-        // Merging method arguments with class fileds 
+        // Merging method arguments with class fields
         if (!$publicKey) {
             throw new \Phalcon\Exception(self::RECAPTCHA_ERROR_KEY);
         }
@@ -88,11 +89,12 @@ class Recaptcha extends \Phalcon\DI\Injectable
      * Calls an HTTP POST function to verify if the user's guess was correct
      *
      * @param string $privateKey
-     * @param string $remoteip
+     * @param string $remoteIP
      * @param string $challenge
      * @param string $response
      * @param array $extra_params An array of extra variables to post to the server
      * @return boolean $this->is_valid property
+     * @throws \Phalcon\Exception
      */
     public static function check($privateKey, $remoteIP, $challenge, $response, $extra_params = array())
     {
@@ -115,7 +117,7 @@ class Recaptcha extends \Phalcon\DI\Injectable
         ) + $extra_params);
 
         $answers = explode("\n", $response[1]);
-        
+
         if (trim($answers[0]) == 'true') self::$is_valid = true;
         else self::$error = $answers[1];
 
@@ -128,8 +130,9 @@ class Recaptcha extends \Phalcon\DI\Injectable
      * @param string $host
      * @param string $path
      * @param array $data
-     * @param int port
+     * @param int $port
      * @return array response
+     * @throws \Phalcon\Exception
      */
     private static function httpPost($host, $path, $data, $port = 80)
     {
